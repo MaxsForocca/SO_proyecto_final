@@ -1,31 +1,22 @@
 #include "../io/interrupts.h"
 #include "../io/ports.h"
 #include "../drivers/vga.h"
-#include "../history/history.h"
+#include "../history/history.h"  // Si estas definiciones están aquí
+#include "keyboard.h"
 
-// Estado del desplazamiento
-int scroll_position = 0;
 
 void keyboard_interrupt_handler() {
     uint8_t scan_code = inb(0x60);  // Leer código de escaneo
 
-    switch (scan_code) {
-        case 0x48:  // Flecha arriba
-            if (scroll_position > 0) {
-                scroll_position--;  // Subir en el historial
-                update_screen();
-            }
-            break;
-        case 0x50:  // Flecha abajo
-            if (scroll_position < history_count - VGA_HEIGHT) {
-                scroll_position++;  // Bajar en el historial
-                update_screen();
-            }
-            break;
-        default:
-            break;
+    if (scan_code == 0x48 && scroll_position > 0) {  // Flecha arriba
+        scroll_position--;
+        update_screen();
+    } else if (scan_code == 0x50 && scroll_position < history_count - VGA_HEIGHT) {  // Flecha abajo
+        scroll_position++;
+        update_screen();
     }
 
     // Enviar End of Interrupt (EOI)
     outb(0x20, 0x20);
 }
+

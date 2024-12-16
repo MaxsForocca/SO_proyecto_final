@@ -3,13 +3,20 @@
 
 #include "../process/process.h"
 
+#define MAX_WAIT_QUEUE 10
+
 typedef struct resource {
-    uint64_t id;
-    uint64_t is_in_use;   // 1 si está en uso, 0 si está disponible
-    process_t* owner;     // Proceso que tiene el recurso
+    int id;                     // ID del recurso
+    int is_in_use;              // 0 = libre, 1 = ocupado
+    process_t* owner;           // Proceso que posee el recurso
+    int is_shared;              // 1 = compartido, 0 = exclusivo
+    process_t* wait_queue[MAX_WAIT_QUEUE]; // Cola de espera
+    int queue_size;             // Tamaño de la cola
 } resource_t;
 
-void use_resource(process_t* process, resource_t* resource);
+// Funciones para manejar recursos
+void init_resource(resource_t* resource, int id, int is_shared);
+int use_resource(process_t* process, resource_t* resource);
 void release_resource(resource_t* resource);
 
-#endif
+#endif // RESOURCE_H

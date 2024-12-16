@@ -1,9 +1,19 @@
-// src/io/interrupts.c
 #include "interrupts.h"
 
-void register_interrupt(uint8_t interrupt_number, void (*handler)()) {
-    // Código para registrar el manejador en la tabla IDT
-    // (Esto depende de cómo estés configurando la IDT en tu kernel)
+#define MAX_INTERRUPTS 256
+
+static void (*interrupt_handlers[MAX_INTERRUPTS])();  // Arreglo de manejadores
+
+void register_interrupt(uint16_t interrupt_number, void (*handler)()) {
+    if (interrupt_number >= MAX_INTERRUPTS) return;  // Validar límite de interrupciones
+    interrupt_handlers[interrupt_number] = handler;
+}
+
+void trigger_interrupt(uint16_t interrupt_number) {
+    if (interrupt_number >= MAX_INTERRUPTS) return;  // Validar límite de interrupciones
+    if (interrupt_handlers[interrupt_number]) {
+        interrupt_handlers[interrupt_number]();
+    }
 }
 
 void enable_interrupts() {
