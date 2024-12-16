@@ -1,8 +1,8 @@
 build/
 limine/
 OVMFbin/
-build.sh
-limine.cfg
-linker.ld
-startup.nsh
+# build.sh
+# limine.cfg
+# linker.ld
+# startup.nsh
 
